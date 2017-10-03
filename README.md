@@ -27,6 +27,8 @@ Installation
 5. `npm run dev / yarn dev`
 
 
-Next:
-- [x] Logout
-- [x] Forgot password
+Next
+------------
+
+- [ ] Logout
+- [ ] Forgot password
