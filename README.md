@@ -28,5 +28,5 @@ Installation
 
 
 Next:
--[] Logout
--[] Forgot password
+- [] Logout
+- [] Forgot password
