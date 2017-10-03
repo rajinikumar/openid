@@ -25,6 +25,3 @@ Installation
 3. `npm/yarn install`
 4. Add mongodb URl, jwt secret etc... to dev-constants.js
 5. `npm run dev / yarn dev`
-
-
-### If you like this, please give me a star :)
