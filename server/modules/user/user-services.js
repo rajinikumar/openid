@@ -13,28 +13,25 @@ import {
 import constants from "../../config/constants";
 
 class UserServices {
-  async localSignUp({ firstName, lastName, email, password }) {
+  async localSignUp({ userName, email, password }) {
     try {
       /* If user exist */
       const existingUser = await UserModel.findOne({ "local.email": email });
       if (existingUser) {
         if (compareSync(constants.TEMP_PASSWORD, existingUser.local.password)) {
-          existingUser.method = "local";
-          existingUser.local.firstName = firstName;
-          existingUser.local.lastName = lastName;
-          existingUser.local.password = password;
+          existingUser.userName = userName;
+          existingUser.password = password;
           await existingUser.save();
           return existingUser;
         }
-        return { error: true, message: "Email is already taken!" };
+        return { ok: false, error: "Email is already taken!" };
       }
 
       /** Create new user */
       const newUser = new UserModel({
         method: "local",
         local: {
-          firstName,
-          lastName,
+          userName,
           email,
           password
         }
@@ -44,7 +41,7 @@ class UserServices {
       await newUser.save();
       return newUser;
     } catch (err) {
-      throw { error: true, message: String(err) };
+      throw { ok: false, error: String(err) };
     }
   }
 

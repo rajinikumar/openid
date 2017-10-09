@@ -4,10 +4,14 @@
   "description": "Boilerpalte for passport jwt authentication",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon --exec babel-node index.js",
-    "clean": "rm -rf node_modules yarn.lock package-lock.json"
+    "start": "babel-node index.js",
+    "server": "NODE_ENV=development nodemon --exec babel-node index.js",
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "install-all": "cd client && npm install && cd .. && npm install",
+    "clean-all": "rm -rf node_modules yarn.lock package-lock client/node_modules client/yarn.lock client/package-lock"
   },
-  "author": "",
+  "author": "Dong",
   "license": "MIT",
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
@@ -24,12 +28,14 @@
     "passport-google-oauth20": "^1.0.0",
     "passport-jwt": "^3.0.0",
     "passport-local": "^1.0.0",
+    "semantic-ui-react": "^0.74.2",
     "validator": "^9.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
+    "concurrently": "^3.5.0",
     "morgan": "^1.9.0",
     "nodemon": "^1.12.1"
   }

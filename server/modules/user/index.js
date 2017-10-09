@@ -1,18 +1,11 @@
 import { Router } from "express";
-import validate from "express-validation";
-
 import * as userController from "./user-controller";
-import userValidation from "./user-validations";
 import UserServices from "./user-services";
 
 const routes = new Router();
 
 /** All routes for user (Example: /api/user/signup) */
-routes.post(
-  "/singup",
-  validate(userValidation.localSignUp),
-  userController.localSignUp
-);
+routes.post("/singup", userController.localSignUp);
 
 routes.post("/login", UserServices.localLoginMiddleware, userController.login);
 
@@ -37,4 +30,10 @@ routes.get(
   userController.login
 );
 
+routes.get(
+  "/connect/google",
+  UserServices.jwtLoginMiddleware,
+  UserServices.googleLoginMiddleware,
+  userController.login
+);
 export default routes;

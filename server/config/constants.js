@@ -4,7 +4,7 @@ const defaultConfig = {
 
 function getEnv(env) {
   if (env === "development") {
-    return require("./dev-constants")[env];
+    return require("./dev")[env];
   }
 
   if (env === "production") {
