@@ -1,17 +1,16 @@
-import HTTPStatus from "http-status";
-
 import UserServices from "./user-services";
 
 export const localSignUp = async (req, res) => {
   try {
-    const user = await UserServices.localSignUp(req.body);
-
-    /** return user with the token */
-    return res
-      .status(HTTPStatus.CREATED)
-      .json({ ok: true, data: user.toAuthJSON() });
+    const result = await UserServices.localSignUp(req.body);
+    if (!result.ok) {
+      return res.json({ ok: false, error: result.error });
+    }
+    /** return user*/
+    console.log("object", result);
+    return res.json({ ok: true, data: result.data.toRegJSON() });
   } catch (err) {
-    return res.status(HTTPStatus.BAD_REQUEST).json({ ok: false, error: err });
+    return res.json({ ok: false, error: err });
   }
 };
 
@@ -19,10 +18,13 @@ export const localSignUp = async (req, res) => {
 /** Depends on the method of login, return the user info (Example: google) */
 
 export const login = (req, res, next) => {
-  res.status(HTTPStatus.OK).json({ ok: true, data: req.user.toAuthJSON() });
+  res.json({ ok: true, data: req.user.toAuthJSON() });
   return next();
 };
 
 export const secret = (req, res, next) => {
-  res.json({ ok: true, data: "Welcome" });
+  res.json({
+    ok: true,
+    data: `Welcome ${req.user.username} to our secret content!`
+  });
 };

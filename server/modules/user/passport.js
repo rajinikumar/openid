@@ -59,7 +59,8 @@ const googleLogin = new GoogleStrategy(
   googleOpts,
   async (req, accessToken, refreshToken, profile, done) => {
     try {
-      console.log("req", req);
+      // console.log("req", req.user);
+      console.log("profile", profile);
       if (!req.user) {
         const existingUser = await UserModel.findOne({ googleId: profile.id });
         /** User exist */
@@ -92,15 +93,22 @@ const facebookOpts = {
   clientID: constants.FACEBOOK_APP_ID,
   clientSecret: constants.FACEBOOK_APP_SECRET,
   callbackURL: "/api/user/auth/facebook/callback",
-  profileFields: ["id", "emails", "photos", "name"],
+  profileFields: ["id", "emails", "photos", "displayName"],
   proxy: true
 };
 
 const facebookLogin = new FacebookStrategy(
   facebookOpts,
-  async (accessToken, refreshToken, profile, done) => {
+  async (req, accessToken, refreshToken, profile, done) => {
+    console.log("req", req);
+    console.log("------------------------------------");
+    console.log("profile", profile);
+    console.log("------------------------------------");
     try {
       if (!req.user) {
+        console.log("------------------------------------");
+        console.log("here");
+        console.log("------------------------------------");
         const existingUser = await UserModel.findOne({
           facebookId: profile.id
         });

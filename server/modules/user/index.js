@@ -5,11 +5,11 @@ import UserServices from "./user-services";
 const routes = new Router();
 
 /** All routes for user (Example: /api/user/signup) */
-routes.post("/singup", userController.localSignUp);
+routes.post("/signup", userController.localSignUp);
 
 routes.post("/login", UserServices.localLoginMiddleware, userController.login);
 
-/** Protect routes */
+/** Protect routes example*/
 routes.get("/secret", UserServices.jwtLoginMiddleware, userController.secret);
 
 /** Google authenication routes */
@@ -30,10 +30,4 @@ routes.get(
   userController.login
 );
 
-routes.get(
-  "/connect/google",
-  UserServices.jwtLoginMiddleware,
-  UserServices.googleLoginMiddleware,
-  userController.login
-);
 export default routes;

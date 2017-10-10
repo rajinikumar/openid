@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import validator from "validator";
 import { hashSync, compareSync } from "bcrypt-nodejs";
 import jwt from "jsonwebtoken";
 import uniqueValidator from "mongoose-unique-validator";
@@ -9,20 +8,14 @@ import constants from "../../config/constants";
 /** User Model */
 const UserSchema = new Schema(
   {
-    userName: {
+    username: {
       type: String
     },
     email: {
       type: String,
       unique: true,
       trim: true,
-      lowercase: true,
-      validate: {
-        validator(email) {
-          return validator.isEmail(email);
-        },
-        message: "{VALUE} is not a valid email!"
-      }
+      lowercase: true
     },
     password: String,
     googleId: String,
@@ -33,8 +26,8 @@ const UserSchema = new Schema(
 
 /** Before insert into database, hash the passowrd */
 UserSchema.pre("save", function(next) {
-  if (this.isModified("local.password")) {
-    this.local.password = this._hashPassword(this.local.password);
+  if (this.isModified("password")) {
+    this.password = this._hashPassword(this.password);
   }
   return next();
 });
@@ -65,17 +58,18 @@ UserSchema.methods = {
   /** Attach the token into responses */
   toAuthJSON() {
     return {
-      ...this.toJSON(),
+      ...this.toRegJSON(),
       token: `JWT ${this.createToken()}`
     };
   },
 
   /** Override the res.json(user) */
   /** Only return below fields (Example: password is not include) */
-  toJSON() {
+  toRegJSON() {
     return {
       _id: this._id,
-      userName: this.userName
+      username: this.username,
+      email: this.email
     };
   }
 };
