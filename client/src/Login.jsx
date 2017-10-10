@@ -27,7 +27,6 @@ const MessageExampleList = errors => (
 class LoginForm extends Component {
   state = {
     user: {},
-    login: false,
     signup: false,
     username: "",
     email: "",
@@ -36,6 +35,13 @@ class LoginForm extends Component {
     backendErrors: "",
     backendOk: false
   };
+
+  componentDidMount() {
+    const token = localStorage.getItem('auth');
+    const user = axios.get("/api/user/getuser", {headers: {'Authenication': token}});
+    console.log(user);
+  }
+  
 
   handleSubmit = e => {
     const { signup, username, email, password, errors } = this.state;
@@ -79,7 +85,6 @@ class LoginForm extends Component {
     } else {
       this.setState({
         user: result.data.data,
-        login: true,
         backendResult: "Weclome, You are Logged in",
         backendOk: true,
         signup: false,
@@ -115,7 +120,6 @@ class LoginForm extends Component {
   logout = () => {
     this.setState({
       user: {},
-      login: false,
       backendOk: false,
       backendResult: false
     });
@@ -125,7 +129,6 @@ class LoginForm extends Component {
   render() {
     const {
       user,
-      login,
       signup,
       errors,
       username,
@@ -134,6 +137,12 @@ class LoginForm extends Component {
       backendResult,
       backendOk
     } = this.state;
+    let authed = false;
+    const token = localStorage.getItem('auth');
+    if(token) {
+      authed = true;
+    }
+
     return (
       <div className="login-form">
         <Grid
@@ -142,7 +151,7 @@ class LoginForm extends Component {
           verticalAlign="middle"
         >
           <Grid.Column style={{ maxWidth: 450 }}>
-            {!login && (
+            {!authed && (
               <div>
                 <Divider horizontal style={{ color: "teal" }}>
                   {signup ? "Sign up your Account" : "Login into Account"}
@@ -270,8 +279,8 @@ class LoginForm extends Component {
             )}
             <Segment>
               <h1>User Profile</h1>
-              {!login && <h3>Please login to view the profile</h3>}
-              {login && (
+              {!authed && <h3>Please login to view the profile</h3>}
+              {authed && (
                 <div>
                   <Message color="purple">
                     JWT Token is saved in the local storge, You can use it to

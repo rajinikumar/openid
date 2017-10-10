@@ -52,6 +52,7 @@ const googleOpts = {
   clientID: constants.GOOGLE_CLIENT_ID,
   clientSecret: constants.GOOGLE_CLIENT_SECRET,
   callbackURL: "/api/user/auth/google/callback",
+  passReqToCallback: true,
   proxy: true
 };
 
@@ -71,7 +72,7 @@ const googleLogin = new GoogleStrategy(
         /** User not exist */
         /** Create a user using the profile come back from google auth */
         const newUser = new UserModel({
-          userName: profile.displayName,
+          username: profile.displayName,
           googleId: profile.id
         });
         await newUser.save();
@@ -94,13 +95,14 @@ const facebookOpts = {
   clientSecret: constants.FACEBOOK_APP_SECRET,
   callbackURL: "/api/user/auth/facebook/callback",
   profileFields: ["id", "emails", "photos", "displayName"],
+  passReqToCallback: true,
   proxy: true
 };
 
 const facebookLogin = new FacebookStrategy(
   facebookOpts,
   async (req, accessToken, refreshToken, profile, done) => {
-    console.log("req", req);
+    console.log("req", req.user);
     console.log("------------------------------------");
     console.log("profile", profile);
     console.log("------------------------------------");
@@ -121,7 +123,7 @@ const facebookLogin = new FacebookStrategy(
         /** User not exist */
         /** Create a user using the profile come back from facebook */
         const newUser = new UserModel({
-          userName: profile.displayName,
+          username: profile.displayName,
           facebookId: profile.id
         });
         await newUser.save();
@@ -154,7 +156,9 @@ export const authGoogle = passport.authenticate("google", {
   ] /** User information needed from google auth call back */
 });
 export const authGoogleCallback = passport.authenticate("google", {
-  session: false
+  session: false,
+  successRedirect:'/',
+  failureRedirect:'/'
 });
 
 export const authFacebook = passport.authenticate("facebook", {
@@ -162,4 +166,6 @@ export const authFacebook = passport.authenticate("facebook", {
 });
 export const authFacebookCallback = passport.authenticate("facebook", {
   session: false
+  // successRedirect:'/',
+  // failureRedirect:'/'
 });

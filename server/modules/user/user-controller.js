@@ -7,7 +7,6 @@ export const localSignUp = async (req, res) => {
       return res.json({ ok: false, error: result.error });
     }
     /** return user*/
-    console.log("object", result);
     return res.json({ ok: true, data: result.data.toRegJSON() });
   } catch (err) {
     return res.json({ ok: false, error: err });
@@ -19,6 +18,16 @@ export const localSignUp = async (req, res) => {
 
 export const login = (req, res, next) => {
   res.json({ ok: true, data: req.user.toAuthJSON() });
+  return next();
+};
+
+export const socialLogin = (req, res, next) => {
+  res.redirect(`/socialLogin/JWT ${req.user.createToken()}`);  
+  return next();
+};
+
+export const getUser = (req, res, next) => {
+  res.json({ ok: true, data: req.user.toRegJSON() });
   return next();
 };
 
