@@ -13,7 +13,6 @@ Technology
 | ------------- |
 | Express       |
 | JWT           |
-| Joi           |
 | Passport      |
 | Mongoose      |
 
@@ -22,13 +21,11 @@ Installation
 
 1. git clone passport-jwt-es6-authentication-boilerplate
 2. cd passport-jwt-es6-authentication-boilerplate
-3. `npm/yarn install`
+3. `npm run install-all`
 4. Add mongodb URl, jwt secret etc... to dev-constants.js
-5. `npm run dev / yarn dev`
-
+5. `npm run dev`
 
 Next
 ------------
-
-- [ ] Logout
+- [ ] Link accounts
 - [ ] Forgot password
