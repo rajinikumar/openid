@@ -6,6 +6,5 @@ export const development = {
   GOOGLE_CLIENT_ID: "****",
   GOOGLE_CLIENT_SECRET: "****",
   FACEBOOK_APP_ID: "****",
-  FACEBOOK_APP_SECRET: "****",
-  TEMP_PASSWORD: "****"
+  FACEBOOK_APP_SECRET: "****"
 };

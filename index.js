@@ -4,6 +4,7 @@ import constants from "./server/config/constants";
 import middlewares from "./server/config/middlewares";
 import "./server/config/db";
 import Routes from "./server/modules";
+import path from "path";
 
 const app = express();
 
