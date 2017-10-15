@@ -61,9 +61,9 @@ const googleLogin = new GoogleStrategy(
   async (req, accessToken, refreshToken, profile, done) => {
     try {
       // console.log("req", req.user);
-      console.log("profile", profile);
       if (!req.user) {
         const existingUser = await UserModel.findOne({ googleId: profile.id });
+        console.log('object', existingUser);
         /** User exist */
         if (existingUser) {
           return done(null, existingUser);
@@ -75,6 +75,7 @@ const googleLogin = new GoogleStrategy(
           username: profile.displayName,
           googleId: profile.id
         });
+        console.log('new user', newUser);
         await newUser.save();
         done(null, newUser);
       } else {
@@ -102,15 +103,9 @@ const facebookOpts = {
 const facebookLogin = new FacebookStrategy(
   facebookOpts,
   async (req, accessToken, refreshToken, profile, done) => {
-    console.log("req", req.user);
-    console.log("------------------------------------");
-    console.log("profile", profile);
-    console.log("------------------------------------");
     try {
+      console.log('req', req.user);
       if (!req.user) {
-        console.log("------------------------------------");
-        console.log("here");
-        console.log("------------------------------------");
         const existingUser = await UserModel.findOne({
           facebookId: profile.id
         });
@@ -146,7 +141,7 @@ passport.use(jwtLogin);
 passport.use(googleLogin);
 passport.use(facebookLogin);
 
-export const authLocal = passport.authenticate("local", { session: false });
+export const authLocal = passport.authenticate("local",{ session: false });
 export const authJwt = passport.authenticate("jwt", { session: false });
 
 export const authGoogle = passport.authenticate("google", {
@@ -156,9 +151,7 @@ export const authGoogle = passport.authenticate("google", {
   ] /** User information needed from google auth call back */
 });
 export const authGoogleCallback = passport.authenticate("google", {
-  session: false,
-  successRedirect:'/',
-  failureRedirect:'/'
+  session: false
 });
 
 export const authFacebook = passport.authenticate("facebook", {
@@ -166,6 +159,4 @@ export const authFacebook = passport.authenticate("facebook", {
 });
 export const authFacebookCallback = passport.authenticate("facebook", {
   session: false
-  // successRedirect:'/',
-  // failureRedirect:'/'
 });

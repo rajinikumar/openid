@@ -26,7 +26,7 @@ const MessageExampleList = errors => (
 
 class LoginForm extends Component {
   state = {
-    user: {},
+    user: this.props.user || {},
     signup: false,
     username: "",
     email: "",
@@ -37,9 +37,24 @@ class LoginForm extends Component {
   };
 
   componentDidMount() {
+    this.getUser();
+  }
+
+  getUser = async () => {
     const token = localStorage.getItem('auth');
-    const user = axios.get("/api/user/getuser", {headers: {'Authenication': token}});
-    console.log(user);
+    if (token) {
+      const result = await axios.get("/api/user/getuser", { headers: {Authorization: token}});
+      console.log(result.data);
+      if (!result.data.ok) {
+        this.setState({ backendOk: false, backendResult: result.data.error });
+      } else {
+        this.setState({
+          user: result.data.data,
+          backendResult: "Weclome, You are Logged in",
+          backendOk: true
+        });
+      }
+    }
   }
   
 
@@ -77,9 +92,6 @@ class LoginForm extends Component {
       email,
       password
     });
-    console.log("------------------------------------");
-    console.log("result", result);
-    console.log("------------------------------------");
     if (!result.data.ok) {
       this.setState({ backendOk: false, backendResult: result.data.error });
     } else {
@@ -137,11 +149,9 @@ class LoginForm extends Component {
       backendResult,
       backendOk
     } = this.state;
-    let authed = false;
+
+    let authed = Object.keys(user).length > 0;
     const token = localStorage.getItem('auth');
-    if(token) {
-      authed = true;
-    }
 
     return (
       <div className="login-form">
@@ -176,6 +186,11 @@ class LoginForm extends Component {
                   </div>
                 )}
                 {errors.length > 0 && MessageExampleList(errors)}
+                {backendResult && (
+                  <Message error={!backendOk} success={backendOk}>
+                    {backendResult}
+                  </Message>
+                )}
                 <Form size="large">
                   <Segment stacked>
                     {signup && (
@@ -272,11 +287,6 @@ class LoginForm extends Component {
                 </Segment.Group>
               </div>
             )}
-            {backendResult && (
-              <Message error={!backendOk} success={backendOk}>
-                {backendResult}
-              </Message>
-            )}
             <Segment>
               <h1>User Profile</h1>
               {!authed && <h3>Please login to view the profile</h3>}
@@ -290,7 +300,7 @@ class LoginForm extends Component {
                     <h4>id: {user._id}</h4>
                     <h4>Username: {user.username}</h4>
                     <h4>Email: {user.email}</h4>
-                    <h4>Token: {user.token}</h4>
+                    <h4>Token: {user.token || token}</h4>
                   </div>
 
                   <Segment.Group horizontal>
@@ -302,20 +312,20 @@ class LoginForm extends Component {
                       </a>
                     </Segment>
                     <Segment>
-                      <a href="/api/user/connect/facebook">
+                      <a href="/api/user/auth/facebook">
                         <Button color="facebook" fluid>
-                          <Icon name="facebook" /> LInk to Facebook
+                          <Icon name="facebook" /> Link to Facebook
                         </Button>
                       </a>
                     </Segment>
                   </Segment.Group>
                   <Button
-                    color="orange"
+                    color="red"
                     fluid
                     style={{ marginTop: "20px" }}
                     onClick={this.logout}
                   >
-                    Log Out
+                    Logout
                   </Button>
                 </div>
               )}

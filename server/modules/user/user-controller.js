@@ -16,7 +16,8 @@ export const localSignUp = async (req, res) => {
 /** req.user is from passport (include all user data) */
 /** Depends on the method of login, return the user info (Example: google) */
 
-export const login = (req, res, next) => {
+export const login = (err, user, info) => {
+  console.log('err', err, user, info);
   res.json({ ok: true, data: req.user.toAuthJSON() });
   return next();
 };

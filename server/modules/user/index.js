@@ -1,4 +1,5 @@
 import { Router } from "express";
+import passport from 'passport';
 import * as userController from "./user-controller";
 import UserServices from "./user-services";
 
@@ -7,7 +8,14 @@ const routes = new Router();
 /** All routes for user (Example: /api/user/signup) */
 routes.post("/signup", userController.localSignUp);
 
-routes.post("/login", UserServices.localLoginMiddleware, userController.login);
+/** custom callback */
+routes.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) return next(err);
+    if (!user) return res.json({ ok: false, error:"You are not authorized"});
+    res.json({ ok: true, data: user.toAuthJSON()});
+  })(req, res, next);
+});
 
 /** Protect routes example*/
 routes.get("/getuser", UserServices.jwtLoginMiddleware, userController.getUser);
