@@ -1,5 +1,5 @@
 import { Router } from "express";
-import passport from 'passport';
+import passport from "passport";
 import * as userController from "./user-controller";
 import UserServices from "./user-services";
 
@@ -9,11 +9,11 @@ const routes = new Router();
 routes.post("/signup", userController.localSignUp);
 
 /** custom callback */
-routes.post('/login', function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
+routes.post("/login", function(req, res, next) {
+  passport.authenticate("local", function(err, user, info) {
     if (err) return next(err);
-    if (!user) return res.json({ ok: false, error:"You are not authorized"});
-    res.json({ ok: true, data: user.toAuthJSON()});
+    if (!user) return res.json({ ok: false, error: "You are not authorized" });
+    res.json({ ok: true, data: user.toAuthJSON() });
   })(req, res, next);
 });
 

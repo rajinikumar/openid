@@ -60,29 +60,26 @@ const googleLogin = new GoogleStrategy(
   googleOpts,
   async (req, accessToken, refreshToken, profile, done) => {
     try {
-      // console.log("req", req.user);
       if (!req.user) {
-        const existingUser = await UserModel.findOne({ googleId: profile.id });
-        console.log('object', existingUser);
+        let user = await UserModel.findOne({ googleId: profile.id });
         /** User exist */
-        if (existingUser) {
-          return done(null, existingUser);
+        if (user) {
+          return done(null, user);
         }
 
         /** User not exist */
         /** Create a user using the profile come back from google auth */
-        const newUser = new UserModel({
+        user = new UserModel({
           username: profile.displayName,
           googleId: profile.id
         });
-        console.log('new user', newUser);
-        await newUser.save();
-        done(null, newUser);
+        await user.save();
+        done(null, user);
       } else {
-        const existingUser = await UserModel.findOne({ _id: req.user.id });
-        existingUser.googleId = profile.id;
-        await existingUser.save();
-        done(null, existingUser);
+        const user = await UserModel.findOne({ _id: req.user.id });
+        user.googleId = profile.id;
+        await user.save();
+        done(null, user);
       }
     } catch (error) {
       done(error, false);
@@ -104,30 +101,29 @@ const facebookLogin = new FacebookStrategy(
   facebookOpts,
   async (req, accessToken, refreshToken, profile, done) => {
     try {
-      console.log('req', req.user);
       if (!req.user) {
-        const existingUser = await UserModel.findOne({
+        let user = await UserModel.findOne({
           facebookId: profile.id
         });
 
         /** User exist */
-        if (existingUser) {
-          return done(null, existingUser);
+        if (user) {
+          return done(null, user);
         }
 
         /** User not exist */
         /** Create a user using the profile come back from facebook */
-        const newUser = new UserModel({
+        user = new UserModel({
           username: profile.displayName,
           facebookId: profile.id
         });
-        await newUser.save();
-        done(null, newUser);
+        await user.save();
+        done(null, user);
       } else {
-        const existingUser = await UserModel.findOne({ _id: req.user.id });
-        existingUser.facebookId = profile.id;
-        existingUser.save();
-        done(null, existingUser);
+        const user = await UserModel.findOne({ _id: req.user.id });
+        user.facebookId = profile.id;
+        user.save();
+        done(null, user);
       }
     } catch (error) {
       done(error, false);
@@ -141,7 +137,7 @@ passport.use(jwtLogin);
 passport.use(googleLogin);
 passport.use(facebookLogin);
 
-export const authLocal = passport.authenticate("local",{ session: false });
+export const authLocal = passport.authenticate("local", { session: false });
 export const authJwt = passport.authenticate("jwt", { session: false });
 
 export const authGoogle = passport.authenticate("google", {
