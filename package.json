@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Boilerpalte for passport jwt authentication",
   "main": "index.js",
-  "engines": {
-    "node": "8.5.0"
-  },
   "scripts": {
     "start": "babel-node index.js",
     "server": "NODE_ENV=development nodemon --exec babel-node index.js",
