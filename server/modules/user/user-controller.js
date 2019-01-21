@@ -23,7 +23,18 @@ export const login = (err, user, info) => {
 };
 
 export const socialLogin = (req, res, next) => {
-  res.redirect(`/socialLogin/JWT ${req.user.createToken()}`);  
+  const { state } = req.query;
+  if (state) {
+    const { returnTo } = JSON.parse(Buffer.from(state, 'base64').toString());
+    if (validUrl.isUri(returnTo)) {
+      res.redirect(`${returnTo}?token=JWT ${req.user.createToken()}`);
+    } else {
+      res.redirect(`/?token=JWT ${req.user.createToken()}`);
+    }
+  }
+  else {
+    res.redirect(`/?token=JWT ${req.user.createToken()}`);
+  }
   return next();
 };
 
@@ -37,4 +48,9 @@ export const secret = (req, res, next) => {
     ok: true,
     data: `Welcome ${req.user.username} to our secret content!`
   });
+};
+
+export const authLogin = (req, res, next) => {
+  res.render('login');
+  return next();
 };

@@ -4,7 +4,7 @@
   "description": "Boilerpalte for passport jwt authentication",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node index.js",
+    "start": "NODE_ENV=development nodemon --exec babel-node index.js",
     "server": "NODE_ENV=development nodemon --exec babel-node index.js",
     "client": "npm run start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
@@ -28,11 +28,14 @@
     "mongoose": "^4.11.13",
     "mongoose-unique-validator": "^1.0.6",
     "passport": "^0.4.0",
+    "passport-amazon": "^1.0.0",
     "passport-facebook": "^2.1.1",
     "passport-google-oauth20": "^1.0.0",
     "passport-jwt": "^3.0.0",
     "passport-local": "^1.0.0",
+    "pug": "^2.0.3",
     "semantic-ui-react": "^0.74.2",
+    "valid-url": "^1.0.9",
     "validator": "^9.0.0"
   },
   "devDependencies": {

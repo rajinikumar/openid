@@ -7,7 +7,9 @@ import {
   authGoogle,
   authGoogleCallback,
   authFacebook,
-  authFacebookCallback
+  authFacebookCallback,
+  authAmazon,
+  authAmazonCallback,
 } from "./passport";
 
 import constants from "../../config/constants";
@@ -58,6 +60,14 @@ class UserServices {
 
   facebookLoginCallbackMiddleware(req, res, next) {
     return authFacebookCallback(req, res, next);
+  }
+
+  amazonLoginMiddleware(req, res, next) {
+    return authAmazon(req, res, next);
+  }
+
+  amazonLoginCallbackMiddleware(req, res, next) {
+    return authAmazonCallback(req, res, next);
   }
 }
 

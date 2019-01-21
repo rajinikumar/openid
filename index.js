@@ -14,6 +14,10 @@ middlewares(app);
 /* Routers */
 app.use("/api", Routes);
 
+//Set Rendering Engine as Jade
+app.set('views', './server/views');
+app.set('view engine', 'pug');
+
 /** Server client static file */
 if (process.env.NODE_ENV === "production") {
   /** Express will serve up production assets */

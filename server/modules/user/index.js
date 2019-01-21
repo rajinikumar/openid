@@ -5,6 +5,9 @@ import UserServices from "./user-services";
 
 const routes = new Router();
 
+/** custom callback */
+routes.get("/auth/login", userController.authLogin);
+
 /** All routes for user (Example: /api/user/signup) */
 routes.post("/signup", userController.localSignUp);
 
@@ -41,4 +44,19 @@ routes.get(
   userController.socialLogin
 );
 
+routes.get('/auth/amazon',
+  passport.authenticate('amazon', { scope: ['profile', 'postal_code'] }),
+  function(req, res){
+    // The request will be redirected to Amazon for authentication, so this
+    // function will not be called.
+  });
+
+/** Amazon authenication routes */
+//routes.get("/auth/amazon", UserServices.amazonLoginMiddleware);
+
+routes.get(
+  "/auth/amazon/callback",
+  UserServices.amazonLoginCallbackMiddleware,
+  userController.socialLogin
+);
 export default routes;

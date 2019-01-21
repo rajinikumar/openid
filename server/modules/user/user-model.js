@@ -11,6 +11,9 @@ const UserSchema = new Schema(
     username: {
       type: String
     },
+    name: {
+      type: String
+    },
     email: {
       type: String,
       unique: true,
@@ -19,7 +22,8 @@ const UserSchema = new Schema(
     },
     password: String,
     googleId: String,
-    facebookId: String
+    facebookId: String,
+    amazonId: String
   },
   { timestamps: true }
 );
@@ -44,11 +48,12 @@ UserSchema.methods = {
 
   /** token will send to client for authenication */
   createToken() {
+    console.log(this.email)
     return jwt.sign(
       {
         sub: this._id,
-        expiresIn: "1 days",
-        issuer: "rent out"
+        email: this.email || '',
+        expiresIn: "2 days"
       },
       constants.JWT_SECRET
     );

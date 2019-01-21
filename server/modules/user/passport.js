@@ -3,7 +3,7 @@ import LocalStrategy from "passport-local";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import { Strategy as FacebookStrategy } from "passport-facebook";
-
+import { Strategy as AmazonStrategy } from "passport-amazon";
 import UserModel from "./user-model";
 import constants from "../../config/constants";
 
@@ -66,11 +66,11 @@ const googleLogin = new GoogleStrategy(
         if (user) {
           return done(null, user);
         }
-
         /** User not exist */
         /** Create a user using the profile come back from google auth */
         user = new UserModel({
-          username: profile.displayName,
+          email: profile.emails && profile.emails[0].value || 'google-not-provided',
+          name: profile.displayName,
           googleId: profile.id
         });
         await user.save();
@@ -131,21 +131,68 @@ const facebookLogin = new FacebookStrategy(
   }
 );
 
+/** Amazon OAuth strategy login*/
+const amazonOpts = {
+  clientID: constants.AMAZON_APP_ID,
+  clientSecret: constants.AMAZON_APP_SECRET,
+  callbackURL: "/api/user/auth/amazon/callback"
+};
+
+const amazonLogin = new AmazonStrategy(
+  amazonOpts,
+  async (req, accessToken, refreshToken, profile, done) => {
+    console.log("suu amazon");
+    try {
+      
+      if (!req.user) {
+        let user = await UserModel.findOne({ googleId: profile.id });
+        /** User exist */
+        if (user) {
+          return done(null, user);
+        }
+        /** User not exist */
+        /** Create a user using the profile come back from google auth */
+        user = new UserModel({
+          email: profile.emails && profile.emails[0].value || 'google-not-provided',
+          name: profile.displayName,
+          googleId: profile.id
+        });
+        await user.save();
+        done(null, user);
+      } else {
+        const user = await UserModel.findOne({ _id: req.user.id });
+        user.googleId = profile.id;
+        await user.save();
+        done(null, user);
+      }
+    } catch (error) {
+      done(error, false);
+    }
+  }
+);
 /** Apply all login strategy */
 passport.use(localLogin);
 passport.use(jwtLogin);
 passport.use(googleLogin);
 passport.use(facebookLogin);
+passport.use(amazonLogin);
 
 export const authLocal = passport.authenticate("local", { session: false });
 export const authJwt = passport.authenticate("jwt", { session: false });
 
-export const authGoogle = passport.authenticate("google", {
-  scope: [
-    "profile",
-    "email"
-  ] /** User information needed from google auth call back */
-});
+
+function authGoogle(req, res, next) {  
+  const { returnTo } = req.query;
+  const state = returnTo ? Buffer.from(JSON.stringify({ returnTo })).toString('base64') : undefined
+  return passport.authenticate("google", {
+    scope: [
+      "profile",
+      "email"
+    ],
+    state /** User information needed from google auth call back */
+  })(req, res, next);
+}
+
 export const authGoogleCallback = passport.authenticate("google", {
   session: false
 });
@@ -156,3 +203,23 @@ export const authFacebook = passport.authenticate("facebook", {
 export const authFacebookCallback = passport.authenticate("facebook", {
   session: false
 });
+
+
+function authAmazon(req, res) {  
+  const { returnTo } = req.query;
+  console.log(returnTo);
+  const state = returnTo ? Buffer.from(JSON.stringify({ returnTo })).toString('base64') : undefined
+  return passport.authenticate("amazon", {
+    scope: [
+      "profile",
+      "postal_code"
+    ]
+  })(req, res);
+}
+
+export const authAmazonCallback = passport.authenticate("amazon", {
+  session: false
+});
+
+module.exports.authGoogle = authGoogle;
+module.exports.authAmazon = authAmazon;
