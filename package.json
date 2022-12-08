@@ -20,7 +20,7 @@
     "babel-preset-env": "^1.6.0",
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.18.2",
-    "express": "^4.15.5",
+    "express": "^4.17.3",
     "express-validation": "^1.0.2",
     "http-status": "^1.0.1",
     "joi": "^11.1.1",
